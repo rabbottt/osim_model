@@ -87,7 +87,7 @@ plotTools.plot_vectors(x,y,z,origin,fig,ax)
 
 
 %% CHANGE POSTURE AND CALC CONV HULL VOLUME
-pp = 12;
+pp = 10;
 visObj.updatePosture(postures(pp,:));
 accel = FAS.Posture(pp).accel';
 cVol = utility.computeCHullVolume(accel);

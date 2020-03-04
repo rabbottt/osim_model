@@ -3,62 +3,23 @@
 % must have 'postures' array in workspace of correct number of columns to
 % match the DOF in selected model (model_source)
 
-load('C:\Users\16179\Dropbox\Research\Projects\computational_modeling\NeckSimProject\Code\Code_Clean\savedData\3jnt_mmParams\Sm_simp70to24mm.mat')
-load('C:\Users\16179\Dropbox\Research\Projects\computational_modeling\NeckSimProject\Code\Code_Clean\savedData\3jnt_mmParams\postures9_sag.mat')
+load('C:\Users\16179\Documents\GitHub\osim_model\savedData\SmMatrix.mat')
 
 %% SETUP
 
 % Output Folder
-output_folder = 'savedData\3jnt_upright';
+output_folder = 'savedData';
 %write description of simulation here to save with parameters 
 sim_description = 'unconstrained 9dof (3 joints). upright. Model parameters from hyoid model and updated with new Vasavada model.';
 %for file_name to save
-base_name = 'upright_9dof'; %CHANGE THIS BASED ON POSTURE CONFIGURATION
+base_name = 'upright_9dof';
 
-% set model case
-model_source = 6;
-switch model_source
-    case 1 % original with coupled vertebral motion (6DOF)
-        model_path = 'C:\libs\Model\neckModel.osim';
-        muscle_list = ModelConstants.MuscleList;
-        ind_coord_list = ModelConstants.CoordList6;
-        coord_list = ModelConstants.CoordList24;
-        unconstrain = 0;
-    case 2 % original with uncoupled vertebrae (24DOF)
-        model_path = 'C:\libs\Model\neckModel.osim';
-        muscle_list = ModelConstants.MuscleList;
-        ind_coord_list = ModelConstants.CoordList24;
-        coord_list = ModelConstants.CoordList24;
-        unconstrain = 1;
-    case 3 % 6 joint, all other vertebrae welded
-        model_path = 'C:\libs\Model\neckModel-6jnt.osim';
-        muscle_list = ModelConstants.MuscleList;
-        ind_coord_list = ModelConstants.CoordList6;
-        coord_list = ModelConstants.CoordList6;        
-        unconstrain = 0; %no constraints exist in this model
-    case 4 % 9 joint, all other vertebrae welded
-        model_path = 'C:\libs\Model\neckModel-9jnt.osim';
-        muscle_list = ModelConstants.MuscleList;
-        ind_coord_list = ModelConstants.CoordList9;
-        coord_list = ModelConstants.CoordList9;        
-        unconstrain = 0; %no constraints exist in this model
-    case 5 % only couple upper c-spine, uncouple lower
-        model_path = 'C:\libs\Model\neckModel.osim';
-        muscle_list = ModelConstants.MuscleList;
-        ind_coord_list = ModelConstants.CoordList6;
-        coord_list = ModelConstants.CoordList24;
-        unconstrain = 1; % will only unconstrain the lower c-spine though! 
-        constraint_indices = 0:14; %all constraints except for c0-c1 
-    case 6 % 9 joint with reduced muscles
-        model_path = 'C:\libs\Model\neckModel-9jnt-reduce.osim';
-        muscle_list = ModelConstants.MuscleList_reduced;
-        ind_coord_list = ModelConstants.CoordList9;
-        coord_list = ModelConstants.CoordList9;
-        unconstrain = 0; %no constraints exist in this model..
-           
-end
-
-
+% OpenSim Model
+model_path = 'C:\libs\Model\neckModel-9jnt-reduce.osim';
+muscle_list = ModelConstants.MuscleList_reduced;
+ind_coord_list = ModelConstants.CoordList9;
+coord_list = ModelConstants.CoordList9;
+unconstrain = 0; % no constraints exist in this model
 
 % osim libraries
 import org.opensim.modeling.*;
@@ -70,35 +31,12 @@ osim = osim.setCoordList(coord_list);
 osim = osim.setIndCoordList(ind_coord_list);
 
 %location of point of reference on head
-skull_station = 'top_of_head';
-switch skull_station
-    case 'forehead'
-        station_vec = [ 0.1 0.1 0 ]; %forehead
-    case 'top_of_head'
-        station_vec = [0 0.2 0]; %top of head (load cell from Fice et al.)
-    case 'C0'
-        station_vec = [0 0 0]; % at base of skull - C0 joint
-    otherwise
-        station_vec = [0 0 0];
-        disp('you did not select a station vector on the skull, using (0 0 0)')
-end
+station_vec = [0 0 0];
 osim = osim.setStationVector(station_vec);
-
 
 %body orientation('upright', 'prone', 'supine', 'fwd_lean', 'back_lean')
 body_orientation = 'upright';
 osim.changeBodyOrientation(body_orientation)
-
-% to enforce coupler constraints (6DOF) choose 1
-% to not use constraints (24DOF) choose 0
-% default is for constraints to be enforced.
-if unconstrain == 1 
-    if exist('constraint_indices', 'var') % if constraint_indices has been defined
-        osim.setEnforceConstraints(0, constraint_indices);
-    else
-        osim.setEnforceConstraints(0)
-    end
-end
 
 %save settings in setup structure
 setup.unconstrain = unconstrain;
@@ -122,7 +60,6 @@ mm_source = 1;
 
 switch mm_source
     case 1
-        %mmConstants = osim.getMuscleConstants();
         mmConstants = osim.getMuscleConstants();
     case 2
         muscle_param_file_path = ...
@@ -138,7 +75,9 @@ end
 
 %% neck structure
 
-neck = NeckParams(postures,mmConstants,osim);
+% neutral posture
+posture = zeros(1,9); 
+neck = NeckParams(posture, mmConstants, osim);
 
 neck.info.description = sim_description;
 neck.info.model_path = model_path;
