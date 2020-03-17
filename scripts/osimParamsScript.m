@@ -1,9 +1,4 @@
-%% RUN EXTRACTION AND FAS IN ONE DYNAMIC SCRIPT
-
-% must have 'postures' array in workspace of correct number of columns to
-% match the DOF in selected model (model_source)
-
-load('C:\Users\16179\Documents\GitHub\osim_model\savedData\SmMatrix.mat')
+%% EXTRACT NECK PARAMETERS FROM OSIM MODEL 
 
 %% SETUP
 
@@ -98,43 +93,6 @@ end
 
 
 
-%% RUN FAS OPTIMIZATIONS
-
-unitvecs = utility.unit_sphere(100);
-
-FAS_version = 'reduced_mm';
-%changed NeckFAS to not include Fb and Fp
-switch FAS_version
-    case 'all_mm'
-        FAS = NeckFAS2(neck,unitvecs); %full 98 muscles
-    case 'reduced_mm'
-        options.Sm = Sm;
-        FAS = NeckFAS2(neck,unitvecs,options); % simplify to smaller set of muscles using Sm matrix
-        FAS.Sm = Sm;
-    otherwise 
-        warning('Select a version of FAS.')
-end
-FAS.info.mm_set = FAS_version;
-
-%% run FWS
-unitvecs = [1,0,0,0,0,0;0,1,0,0,0,0;0,0,1,0,0,0;0,0,0,1,0,0;0,0,0,0,1,0;0,0,0,0,0,1];
-options.Sm = Sm;
-FWS = NeckFWS(neck,unitvecs,options);
-
-%% SAVE FAS STRUCTURE
-
-try
-%     Save FAS structures into FAS mat file in savedData folder
-    file_name = sprintf('FASall_%s_%s.mat', base_name, datestr(now,'mm-dd-yyyy_HH-MM'));
-    full_file_name = fullfile(output_folder, file_name);
-    save(full_file_name, 'FAS');
-    
-    disp(['The FAS structure has been saved at ' full_file_name]);
-catch
-    warning('Unable to save FAS to .mat file');
-end
-
-%%
 
    
     

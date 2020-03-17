@@ -164,11 +164,12 @@ end
 unitvecs = utility.unit_sphere(100);
 
 FAS_version = 'reduced_mm';
+Sm = ModelConstants.Sm;
 %changed NeckFAS to not include Fb and Fp
 switch FAS_version
     case 'all_mm'
         FAS = NeckFAS2(neck,unitvecs); %full 98 muscles
-    case 'reduced_mm'
+    case 'reduced_mm'        
         options.Sm = Sm;
         FAS = NeckFAS2(neck,unitvecs,options); % simplify to smaller set of muscles using Sm matrix
         FAS.Sm = Sm;
