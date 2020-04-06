@@ -1,5 +1,5 @@
 classdef Muscles < uint8
-    enumeration %98 muscles; multif: 73-98
+    enumeration %96 muscles; multif: 73-96
             digastric_post          (1)
             digastric_post_L        (2)
             digastric_ant           (3)
