@@ -56,11 +56,11 @@ classdef osimClass
         
         %not initialized in constructor
         %muscleList = ModelConstants.MuscleList_reduced; %default
-        muscleList = ModelConstants.MuscleList;
-        IndCoordList = ModelConstants.CoordList6; %default 6 independent coords
-        CoordList = ModelConstants.CoordList24; %default 24 coords (some coupled)
+        muscleList = ModelConstants.MuscleList; % default: all 94 muscles
+        IndCoordList = ModelConstants.CoordList; %default: all 24 coords
+        CoordList = ModelConstants.CoordList; %default: all 24 coords
         bushingList = ModelConstants.BushingForceList; %default
-        StationVector = [ 0.1, 0.1, 0.0 ]; %default: forehead
+        StationVector = [ 0.0, 0.0, 0.0 ]; %default: skull frame base
         laserVector = [ 10.0, 0.1, 0.0 ]; %default: 10m from forehead
     end
 
@@ -332,10 +332,8 @@ classdef osimClass
             
             %location of point in body frame
             station_vector = utility.osimVec3FromArray(obj.StationVector); 
-            
-            %debug
-            smss = obj.model.getMatterSubsystem();
 
+            smss = obj.model.getMatterSubsystem();
             smss.calcStationJacobian(state, body_index, station_vector, osimJ);
             J = utility.osimMatrixToArray(osimJ);
             J(abs(J) < obj.zero_cut) = 0;
