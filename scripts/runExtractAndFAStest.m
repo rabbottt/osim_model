@@ -11,7 +11,7 @@ load('C:\Users\16179\Dropbox\Research\Projects\computational_modeling\NeckSimPro
 % Output Folder
 output_folder = 'savedData\3jnt_upright';
 %write description of simulation here to save with parameters 
-sim_description = 'unconstrained 9dof (3 joints). upright. Model parameters from hyoid model and updated with new Vasavada model.';
+sim_description = 'unconstrained 9dof (3 joints). prone. top of head. Model parameters from hyoid model and updated with new Vasavada model.';
 %for file_name to save
 base_name = 'upright_9dof'; %CHANGE THIS BASED ON POSTURE CONFIGURATION
 
@@ -118,7 +118,7 @@ setup.model_path = model_path;
 % mm_source = 2 for muscle paramters from excel spreadsheet (no multif)
 % mm_source = 3 for muscle parameters scaled elsewhere
 
-mm_source = 1;
+mm_source = 3;
 
 switch mm_source
     case 1
@@ -132,7 +132,7 @@ switch mm_source
         %nothing. upload muscle constants from already created structure in
         %scaleGroupMuscleForces.m script
     otherwise
-        error('mm_source must be set to 1 2 or 3');
+        error('mm_source must be set to 1 or 2');
 end
 
 
@@ -169,7 +169,7 @@ Sm = ModelConstants.Sm;
 switch FAS_version
     case 'all_mm'
         FAS = NeckFAS2(neck,unitvecs); %full 98 muscles
-    case 'reduced_mm'        
+    case 'reduced_mm'
         options.Sm = Sm;
         FAS = NeckFAS2(neck,unitvecs,options); % simplify to smaller set of muscles using Sm matrix
         FAS.Sm = Sm;
