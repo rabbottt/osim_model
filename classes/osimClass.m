@@ -341,6 +341,7 @@ classdef osimClass
         end
         
         function J = getFrameJacobian(obj, state)
+            %
             osimJ = obj.osimMatrix;
             body_index = obj.skullframe;
             fh_vec = utility.osimVec3FromArray(obj.StationVector);

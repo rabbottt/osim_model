@@ -37,11 +37,7 @@ classdef plotTools
                     xlabel(plotTools.x_label)
                     ylabel(plotTools.y_label)
                     zlabel(plotTools.z_label)
-%                     axObj(aa).DataAspectRatioMode = 'manual';
-%                     axObj(aa).DataAspectRatio = [1 1 1];
-%                     axObj(aa).PlotBoxAspectRatioMode = 'manual';
-%                     axObj(aa).PlotBoxAspectRatio = [1 1 1];
-                    axis vis3d
+                    axis square
                 end
                 
             elseif ismatrix(axes_layout)
@@ -53,12 +49,7 @@ classdef plotTools
                         xlabel(plotTools.x_label)
                         ylabel(plotTools.y_label)
                         zlabel(plotTools.z_label)
-                        
-%                         axObj(aa,bb).DataAspectRatioMode = 'manual';
-%                         axObj(aa,bb).DataAspectRatio = [1 1 1];
-%                         axObj(aa,bb).PlotBoxAspectRatioMode = 'manual';
-%                         axObj(aa,bb).PlotBoxAspectRatio = [1 1 1];
-                        axis vis3d %new
+                        axis square %vis3d
                     end
                 end
             end
@@ -66,7 +57,6 @@ classdef plotTools
             setappdata(figObj, 'StoreTheLink', Link);
             
             camup([0 1 0]);
-%           axObj(1).CameraUpVector = [0, 1, 0]; %y is up direction
         end        
       
                
