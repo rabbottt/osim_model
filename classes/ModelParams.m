@@ -98,6 +98,32 @@ classdef ModelParams
             
         end
         
+        function names = getMarkerNames(obj)
+            import org.opensim.modeling.*;
+            
+            markerset = obj.osim.model.getMarkerSet();
+            nMarkers = markerset.getSize();
+            names = {};
+            for ii = 1 : nMarkers
+                names{ii} = char(markerset.get(ii-1).toString);
+            end
+            names = names';            
+            
+        end
+        
+        function names = getBodyNames(obj)
+            import org.opensim.modeling.*;
+            
+            bodyset = obj.osim.model.getBodySet();
+            nBodies = bodyset.getSize();
+            names = {};
+            for ii = 1 : nBodies
+                names{ii} = char(bodyset.get(ii-1).toString);
+            end
+            names = names';            
+            
+        end
+        
         function names = getCoordNames(obj)
             
             coordset = obj.osim.coordset;
